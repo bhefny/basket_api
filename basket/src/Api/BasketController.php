@@ -15,6 +15,18 @@ class BasketController
 
     public function show(Request $request, Response $response)
     {
-        return $response->withJson(['user' => $request->getQueryParams()]);
+        $token = $request->getParam('token');
+        $user = $this->db->query("SELECT * FROM users WHERE token='$token'")->fetch();
+
+        if (is_null($user)) {
+            return $response->withJson([], 401);
+        }
+
+
+
+        $data=['a' => $user['id']];
+        return $response->withJson($data);
     }
+
+
 }

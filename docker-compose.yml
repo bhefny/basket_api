@@ -12,7 +12,7 @@ services:
       - basket-mariadb:/var/lib/mysql
 
   nginx:
-    image: tarantool/tarantool-nginx
+    image: nginx:alpine
     ports:
      - "80:80"
     environment:
