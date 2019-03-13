@@ -1,0 +1,39 @@
+version: '3'
+services:
+  mariadb:
+    image: mariadb:10.2
+    ports:
+      - 3308:3306
+    environment:
+      TZ: "Europe/Rome"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "shop_development"
+    volumes:
+      - basket-mariadb:/var/lib/mysql
+
+  nginx:
+    image: tarantool/tarantool-nginx
+    ports:
+     - "80:80"
+    environment:
+      PROXY_BASKET: php:9000
+    volumes:
+      - .docker/nginx/basket.ng_temp:/etc/nginx/conf.d/basket.ng_temp
+      - .docker/nginx/docker-entrypoint.sh:/usr/sbin/docker-entrypoint.sh
+    command:  /bin/sh -c "exec docker-entrypoint.sh"
+
+  php:
+    build:
+      context: .docker/php
+    ports:
+      - "9000"
+    environment:
+      DB_HOST: "mariadb"
+      DB_NAME: "shop_development"
+      DB_USER: "root"
+      DB_PASSWORD: ""
+    volumes:
+      - ./basket:/app
+      - .docker/php/docker-entrypoint-dev.sh:/usr/local/bin/docker-entrypoint-dev.sh
+volumes:
+  basket-mariadb:
