@@ -2,13 +2,15 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateProductsTable extends AbstractMigration
+class CreateUsersTable extends AbstractMigration
 {
     public function change()
     {
-        $product = $this->table('products');
+        $product = $this->table('users');
         $product
-            ->addColumn('title', 'string', ['limit' => 45, 'null' => false])
+            ->addColumn('full_name', 'string', ['limit' => 100, 'null' => false])
+            ->addColumn('email', 'string', ['limit' => 100, 'null' => false])
+            ->addColumn('token', 'string', ['limit' => 100, 'null' => false])
             ->addColumn('created', 'timestamp', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])
             ;
 
