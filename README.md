@@ -1,9 +1,13 @@
 # Purpose:
 
-Sample of Basket API using only show() and update()
+Sample of Basket API using only show() and update() and index().
 
 Using Slim Framework for simplicity. code can be reviewed at located at src/Api/..
 User authentication is simplified and only depending on access token being present in a cookie
+
+All errors will returned as JSON with 404
+
+Just for testing purposes, database is reset with every container restart
 
 ## Steps
 

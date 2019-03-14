@@ -9,6 +9,7 @@ use Slim\Http\Response;
 $app->group('/api',
   function () {
     $this->get('/basket/{id}', BasketController::class . ':show')->setName('basket.show');
+    $this->get('/basket', BasketController::class . ':index')->setName('basket.index');
     $this->put('/basket', BasketController::class . ':update')->setName('basket.update');
 });
 
