@@ -3,7 +3,7 @@
 
 use Phinx\Seed\AbstractSeed;
 
-class BasketSeeder extends AbstractSeed
+class BasketProductSeeder extends AbstractSeed
 {
     /**
      * Run Method.
@@ -16,10 +16,12 @@ class BasketSeeder extends AbstractSeed
     public function run()
     {
         $data = [
-            [ 'user_id' => '1' ],
-            [ 'user_id' => '2' ],
+            [ 'basket_id' => 1, 'product_id' => 1 ],
+            [ 'basket_id' => 1, 'product_id' => 3 ],
+            [ 'basket_id' => 1, 'product_id' => 5 ],
+            [ 'basket_id' => 1, 'product_id' => 7 ],
         ];
-        $products = $this->table('baskets');
+        $products = $this->table('basket_products');
         $products->truncate();
         $products->insert($data)->save();
     }
