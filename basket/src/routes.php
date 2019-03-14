@@ -8,7 +8,7 @@ use Slim\Http\Response;
 // Api Routes
 $app->group('/api',
   function () {
-    $this->get('/basket', BasketController::class . ':show')->setName('basket.show');
+    $this->get('/basket/{id}', BasketController::class . ':show')->setName('basket.show');
     $this->post('/basket', BasketController::class . ':create')->setName('basket.create');
 });
 
