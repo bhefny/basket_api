@@ -37,27 +37,22 @@ class BasketController extends BaseApi
 
         $product = $this->getProduct($request->getParam('product_id'));
 
-        $basket = $this->db->query("SELECT * FROM baskets WHERE user_id='{$user['id']}'")->fetch();
-
-        if (!$basket) {
-          $req = $this->db->prepare("INSERT INTO baskets (user_id) VALUES ('{$user['id']}')");
-          $req->execute(array($user['id']));
-        }
+        $basket_id = $this->getOrCreateBasket($user['id']);
 
         $existing_product = $this
                               ->db
-                              ->query("SELECT * FROM basket_products WHERE basket_id='{$basket['id']}' AND product_id='{$product['id']}'")
+                              ->query("SELECT * FROM basket_products WHERE basket_id='{$basket_id}' AND product_id='{$product['id']}'")
                               ->fetch();
         if (!$existing_product) {
           $req = $this->db->prepare("INSERT INTO basket_products (basket_id, product_id) VALUES (?, ?)");
-          $req->execute(array($basket['id'], $product['id']));
+          $req->execute(array($basket_id, $product['id']));
         }
 
       } catch (\Exception $e) {
         return $this->returnJsonError($response, $e->getMessage(), $e->getCode());
       }
 
-      $products = $this->db->query("SELECT * FROM basket_products WHERE basket_id='{$basket['id']}'")->fetchAll();
+      $products = $this->db->query("SELECT * FROM basket_products WHERE basket_id='{$basket_id}'")->fetchAll();
       return $response->withJson($products);
     }
 

@@ -41,6 +41,20 @@ class BaseApi
     return $product;
   }
 
+  protected function getOrCreateBasket($user_id){
+    $basket = $this->db->query("SELECT * FROM baskets WHERE user_id='{$user_id}'")->fetch();
+    if (!$basket) {
+      $req = $this->db->prepare("INSERT INTO baskets (user_id) VALUES ('{$user_id}')");
+      $req->execute(array($user_id));
+      $basket_id = $this->db->lastInsertId();
+    }
+    else{
+      $basket_id = $basket['id'];
+    }
+
+    return $basket_id;
+  }
+
   protected function returnJsonError(Response $response, $msg='', $code)
   {
     return $response->withJson(['error' => $msg], $code);
