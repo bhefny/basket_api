@@ -1,37 +1,45 @@
-# Test:
+# Purpose:
 
-write a RESTful API, available via HTTP
+Sample of Basket API using only show() and update()
 
-## use case: shopping basket
+Using Slim Framework for simplicity. code can be reviewed at located at src/Api/..
+User authentication is simplified and only depending on access token being present in a cookie
 
-  * userstory1: "as a customer, I want to add an item into the basket"
-  * userstory2: "as a customer, I want to view all my items in my basket"
+## Steps
 
-## expectation:
+1. Clone basket repository form github, we are now on `master` branch
 
-    please provide the code either in PHP or in Python
-    do not invest more than ~3h
-    feel free to use any small code libraries you need, but try to avoid the bigger frameworks like Symphony, Laravel, Zend, Django
-    you can share the code with us (email / github.com or gitlab.org)
-    you share the database structure with us
-    implement at least one test
-    you explain how you would design the CI/ CD pipeline and the production architecture
-        either in written form (use a small chart, name tools, add important notes to each step)
-        or implement it in a free CI tool service
-    use tools/programming languages you are used to and familiar with
+```
+git clone git@github.com:bhefny/basket_API.git
+cd basket_API
+```
 
-## not expected:
-    frontend
+2. Assuming docker & docker-compose are already installed
 
-# Topics for the follow-up call:
+```
+docker-compose up
+```
 
-    discussion about the above test-result itself (code and CI/CD pipeline)
-    questions regarding operation:
-        how to find bottlenecks?
-        how to scale the service?
-        how "available" is the service?
-        how to monitor the service?
+3. List all user tokens
 
-To help us reading and understanding your solution you should make it as simple and clear as possible.
+```
+docker exec -it basket_api_mariadb_1 mysql -sN -u root shop_development -e 'SELECT token FROM users'
+```
 
-We expect the test result within the next 5-7 days. Please prepare yourself and do not hesitate to contact us in case of questions. We will schedule a follow-up call as soon as you hand in the test.
+4. userstory1: "as a customer, I want to add an item into the basket"
+
+```
+curl -iX PUT http://localhost/api/basket --cookie "my_basket_token=<USER_TOKEN>" -d product_id=1
+```
+
+5. userstory2: "as a customer, I want to view all my items in my basket"
+
+```
+curl -iX GET http://localhost/api/basket/1 --cookie "my_basket_token=<USER_TOKEN>"
+```
+
+6. userstory2: "as a customer, I want to view all my items in my basket" (optional)
+
+```
+curl -iX GET http://localhost/api/basket --cookie "my_basket_token=<USER_TOKEN>"
+```
