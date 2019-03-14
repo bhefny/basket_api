@@ -28,10 +28,18 @@ class BaseApi
       throw new \Exception('Basket not found', 404);
     }
 
-
     return $basket;
   }
 
+  protected function getProduct($product_id){
+    $product = $this->db->query("SELECT * FROM products WHERE id='{$product_id}'")->fetch();
+
+    if (!$product) {
+      throw new \Exception('Product not found', 404);
+    }
+
+    return $product;
+  }
 
   protected function returnJsonError(Response $response, $msg='', $code)
   {

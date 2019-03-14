@@ -18,10 +18,8 @@ class BasketController extends BaseApi
     {
       try {
         $user = $this->getUserFromCookie($request);
-        $this->logger->info("------------user: ".var_export($user, true));
 
         $basket = $this->getBasketFromUser($user['id'], $args['id']);
-        $this->logger->info("------------basket: ".var_export($basket, true));
 
       } catch (\Exception $e) {
         return $this->returnJsonError($response, $e->getMessage(), $e->getCode());
@@ -29,24 +27,38 @@ class BasketController extends BaseApi
 
       $products = $this->db->query("SELECT * FROM basket_products WHERE basket_id='{$basket['id']}'")->fetchAll();
 
-
-//         $token = $request->getCookieParam('my_token');
-        // $user = $this->db->query("SELECT * FROM users WHERE token='$token'")->fetch();
-
-// // $statement = $db->prepare("select id from some_table where name = :name");
-// // $statement->execute(array(':name' => "Jimbo"));
-// // $row = $statement->fetch();
-
-//         if (is_null($user)) {
-//             return $response->withJson([], 401);
-//         }
-
-//         $basket = $this->db->query("")->fetch();
-
-        // $data=['a' => $f];
-
-        return $response->withJson($products);
+      return $response->withJson($products);
     }
 
+
+    public function update(Request $request, Response $response){
+      try {
+        $user = $this->getUserFromCookie($request);
+
+        $product = $this->getProduct($request->getParam('product_id'));
+
+        $basket = $this->db->query("SELECT * FROM baskets WHERE user_id='{$user['id']}'")->fetch();
+
+        if (!$basket) {
+          $req = $this->db->prepare("INSERT INTO baskets (user_id) VALUES ('{$user['id']}')");
+          $req->execute(array($user['id']));
+        }
+
+        $existing_product = $this
+                              ->db
+                              ->query("SELECT * FROM basket_products WHERE basket_id='{$basket['id']}' AND product_id='{$product['id']}'")
+                              ->fetch();
+        if (!$existing_product) {
+          $req = $this->db->prepare("INSERT INTO basket_products (basket_id, product_id) VALUES (?, ?)");
+          $req->execute(array($basket['id'], $product['id']));
+        }
+
+      } catch (\Exception $e) {
+        return $this->returnJsonError($response, $e->getMessage(), $e->getCode());
+      }
+
+      $products = $this->db->query("SELECT * FROM basket_products WHERE basket_id='{$basket['id']}'")->fetchAll();
+      return $response->withJson($products);
+    }
 
 }
